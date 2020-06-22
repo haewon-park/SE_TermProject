@@ -16,9 +16,16 @@ android {
     }
 
     buildTypes {
+        debug{
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testCoverageEnabled true
         }
     }
 
@@ -40,3 +47,25 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
 }
+apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+jacoco { toolVersion = '0.8.5' }
+tasks.withType(Test) { jacoco.includeNoLocationClasses = true }
+
+task coverageReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+    // 코드를 통해 추가할 Gradle 기능의 디렉토리(group) 및 설명을 지정. // (필수는 아닌 과정으로 보임)//
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports"
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'])
+} // fileFilter, debugTree, mainSrc의 설정으로 커버리지 책정 및 디버깅에 사용할 프로젝트 파일들을 지정.

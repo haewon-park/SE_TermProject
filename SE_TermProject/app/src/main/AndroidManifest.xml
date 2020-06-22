@@ -36,7 +36,8 @@
         <activity android:name=".AdminTimeSetActivity" />
         <activity android:name=".ElectroActivity" />
         <activity android:name=".CollegeActivity" />
-        
+        <activity android:name=".AdminSignUpActivity" />
+
 
         <activity
             android:name=".LoadingActivity"

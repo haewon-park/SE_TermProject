@@ -11,6 +11,11 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        loading();
+    }
+    public void loading()
+    {
+
         try {
             Thread.sleep(1500);
         }
