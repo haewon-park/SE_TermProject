@@ -68,7 +68,7 @@ public class Alarm_Receiver extends BroadcastReceiver {
 
         // acquire 함수를 사용하였으면 꼭 release 를 해주어야 한다.
         // cpu를 점유하게 되어 배터리 소모나 메모리 소모에 영향을 미칠 수 있다
-        if(sWifiLock == null) {
+        if(sWifiLock != null) {
             sWifiLock.release();
             sWifiLock = null;
         }
