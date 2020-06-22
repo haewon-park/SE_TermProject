@@ -13,9 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,15 +26,18 @@ import java.util.Locale;
 
 public class MemberInitActivity extends AppCompatActivity {
     private static final String TAG = "MemberInitActivity";
-
+    Trace myTrace;
     FirebaseUser user;
     UserInfo userInfo;
+    FirebaseAnalytics mFirebaseAnalytics;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_init);
-
+        myTrace = FirebasePerformance.getInstance().newTrace("user signUp");
         user = FirebaseAuth.getInstance().getCurrentUser();
+// Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
     }
@@ -51,6 +57,7 @@ public class MemberInitActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.checkButton:
+                    myTrace.start();
                     profileUpdate();
                     break;
 
@@ -63,6 +70,13 @@ public class MemberInitActivity extends AppCompatActivity {
         String phoneNumber = ((EditText) findViewById(R.id.phoneNumberEditText)).getText().toString();
         String dept = ((EditText) findViewById(R.id.deptEditText)).getText().toString();
         String studentNumber = ((EditText) findViewById(R.id.studentNumberEditText)).getText().toString();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, studentNumber);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         if (name.length() > 0 && phoneNumber.length() > 9 && dept.length() > 5 && studentNumber.length() > 0) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -77,6 +91,7 @@ public class MemberInitActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 startToast("회원정보 등록을 성공하였습니다.");
+                                myTrace.stop();
                                 finish();
                             }
                         })

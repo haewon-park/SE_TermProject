@@ -14,16 +14,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 public class AdminLoginActivity extends AppCompatActivity {
-
+    Trace myTrace;
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_login);
-
+        myTrace = FirebasePerformance.getInstance().newTrace("admin login");
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -44,6 +46,7 @@ public class AdminLoginActivity extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.loginButton:
                     signUp();
+                    myTrace.start();
                     break;
                 case R.id.registerButton:
                     Intent intent = new Intent(getApplicationContext(), AdminSignUpActivity.class);
@@ -65,6 +68,7 @@ public class AdminLoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
+                                myTrace.stop();
                                 startMainActivity();
                             } else {
                                 if(task.getException() != null){

@@ -15,10 +15,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
-
+    Trace myTrace;
     private FirebaseAuth mAuth;
 
     @Override
@@ -26,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        myTrace = FirebasePerformance.getInstance().newTrace("user login");
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.loginButton:
+                    myTrace.start();
                     signUp();
                     break;
                 case R.id.registerButton:
@@ -64,14 +68,10 @@ public class LoginActivity extends AppCompatActivity {
     private void signUp() {
         String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
         String password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
+
         Bundle bundle = new Bundle();
-
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, email);
-
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, password);
-
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
+        bundle.putString(FirebaseAnalytics.Param.METHOD, email);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle);
 
         if(email.length() > 0 && password.length() > 0){
             mAuth.signInWithEmailAndPassword(email, password)
@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
+                                myTrace.stop();
                                 startMainActivity();
                             } else {
                                 if(task.getException() != null){

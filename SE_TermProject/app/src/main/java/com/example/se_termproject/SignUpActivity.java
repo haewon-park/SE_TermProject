@@ -15,17 +15,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
     private FirebaseAuth mAuth;
-
+    Trace myTrace;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-
+        myTrace = FirebasePerformance.getInstance().newTrace("user signUp");
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -49,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.signUpButton:
                     signUp();
+                    myTrace.start();
                     break;
                 case R.id.goToLoginButton:
                     myStartActivity(LoginActivity.class);
@@ -77,6 +80,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     startToast("회원가입에 성공하였습니다.");
+                                    myTrace.stop();
                                     myStartActivity(MemberInitActivity.class);
 
                                 }

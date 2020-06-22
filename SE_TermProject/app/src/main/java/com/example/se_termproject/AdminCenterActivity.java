@@ -24,6 +24,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -31,6 +33,7 @@ import java.util.Map;
 // Admin Center reservation
 public class AdminCenterActivity extends AppCompatActivity {
     FirebaseFirestore db;
+    Trace myTrace;
     String[] status = new String[31];
     Button Button1;
     Button Button2;
@@ -90,7 +93,7 @@ public class AdminCenterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        myTrace = FirebasePerformance.getInstance().newTrace("admin forced out");
         setContentView(R.layout.activity_admin_center);
         db = FirebaseFirestore.getInstance();
         my_intent = new Intent(getApplicationContext(), Alarm_Receiver.class);
@@ -145,6 +148,7 @@ public class AdminCenterActivity extends AppCompatActivity {
         Button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                myTrace.start();
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCenterActivity.this);
                 builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -235,6 +239,7 @@ public class AdminCenterActivity extends AppCompatActivity {
                                                         Log.w("update", "Error updating document", e);
                                                     }
                                                 });
+                                        myTrace.stop();
                                     }
                                 }
                             }

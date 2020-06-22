@@ -30,6 +30,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,13 +71,13 @@ public class LibraryActivity extends AppCompatActivity {
     String seatNum;
     String dept;
     String timeString;
-
+    Trace myTrace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
-
+        myTrace = FirebasePerformance.getInstance().newTrace("reservation");
 
         docRef = db.collection("users").document(user.getUid());
 
@@ -105,6 +107,7 @@ public class LibraryActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                myTrace.start();
                 String use_time = time.getSelectedItem().toString();
 
                 int index = formatDate.indexOf(':');
@@ -211,6 +214,7 @@ public class LibraryActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        myTrace.stop();
                                         Log.d("update", "DocumentSnapshot successfully updated!");
                                     }
                                 })

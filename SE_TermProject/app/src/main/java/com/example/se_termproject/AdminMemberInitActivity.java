@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.Locale;
 
 public class AdminMemberInitActivity extends AppCompatActivity {
     private static final String TAG = "AdminMemberInitActivity";
-
+    Trace myTrace;
     FirebaseUser user;
     AdminDTO adminInfo;
 
@@ -31,7 +33,7 @@ public class AdminMemberInitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_user_init);
-
+        myTrace = FirebasePerformance.getInstance().newTrace("admin signUp");
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
@@ -52,6 +54,7 @@ public class AdminMemberInitActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.checkButton:
+                    myTrace.start();
                     profileUpdate();
                     break;
 
@@ -76,7 +79,7 @@ public class AdminMemberInitActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 startToast("회원정보 등록을 성공하였습니다.");
-
+                                myTrace.stop();
                                 finish();
                             }
                         })

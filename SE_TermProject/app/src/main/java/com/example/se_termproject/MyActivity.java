@@ -31,6 +31,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -39,7 +41,9 @@ import java.util.Map;
 public class MyActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     int max = 1;
-
+    Trace myTrace;
+    Trace myTrace2;
+    Trace myTrace3;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DocumentReference docRefUserInfo;
     public static int mCount;
@@ -74,6 +78,9 @@ public class MyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myTrace = FirebasePerformance.getInstance().newTrace("extension");
+        myTrace2 = FirebasePerformance.getInstance().newTrace("return seat");
+        myTrace3 = FirebasePerformance.getInstance().newTrace("going out");
         setContentView(R.layout.activity_my);
         room = (TextView) findViewById(R.id.RoomText);
         seat = (TextView) findViewById(R.id.NumText);
@@ -134,6 +141,7 @@ public class MyActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                myTrace.start();
                 if (mCount < 1) {
                     final CharSequence[] items = new CharSequence[]{"30분", "1시간"};
                     final double[] bonus_times = new double[]{0.5, 1};
@@ -227,7 +235,7 @@ public class MyActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("set_hour", result); //키값, 저장값
 
-
+                                myTrace.stop();
                             }
 
 
@@ -257,6 +265,7 @@ public class MyActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                myTrace2.start();
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MyActivity.this);
                 //v7 사용
                 //android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MyActivity.this);
@@ -329,6 +338,7 @@ public class MyActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        myTrace2.stop();
                                         Log.d("update", "DocumentSnapshot successfully updated!");
                                     }
                                 })
@@ -372,9 +382,9 @@ public class MyActivity extends AppCompatActivity {
         });
 
         GoOutButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
+                myTrace3.start();
                 if (gOut < 1) {
                     final CharSequence[] items = new CharSequence[]{"예", "아니오"};
                     final double[] bonus_times = new double[]{0.5, 1};
@@ -420,6 +430,7 @@ public class MyActivity extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            myTrace3.stop();
                                             Log.d("update", "DocumentSnapshot successfully updated!");
                                         }
                                     })

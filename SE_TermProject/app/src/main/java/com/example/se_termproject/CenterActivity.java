@@ -627,6 +627,7 @@ public class CenterActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.reservationButton:
+                    
                     Intent intent = new Intent(getApplicationContext(), LibraryActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("seatNum", seatNumber);
