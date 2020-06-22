@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="com.example.se_termproject.ModeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/logo"/>
+
+        <Button
+            android:id="@+id/mobileButton"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/central" />
+
+        <Button
+            android:id="@+id/roomButton"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/elecinfo" />
+
+        <Button
+            android:id="@+id/infoLibraryButton"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/college" />
+
+        <Button
+            android:id="@+id/readingRoomButton"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/myseat" />
+
+        <Button
+            android:id="@+id/myButton"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/webpage" />
+
+    </LinearLayout>
+</ScrollView>

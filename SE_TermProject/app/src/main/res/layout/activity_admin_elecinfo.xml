@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="30dp"
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/elecinfo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="vertical"
+        android:background="#7A819FF7"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+            <Button
+                android:id="@+id/Button1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="1"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="2"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button3"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="3"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button4"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="4"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button5"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="5"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+            <Button
+                android:id="@+id/Button6"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="6"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button7"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="7"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button8"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="8"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button9"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="9"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button10"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="10"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+            <Button
+                android:id="@+id/Button11"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="11"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button12"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="12"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button13"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="13"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button14"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="14"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button15"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="15"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+            <Button
+                android:id="@+id/Button16"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="16"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button17"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="17"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button18"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="18"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button19"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="19"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button20"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="20"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+            <Button
+                android:id="@+id/Button21"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="21"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button22"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="22"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button23"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="23"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button24"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="24"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button25"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="25"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+            <Button
+                android:id="@+id/Button26"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="26"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button27"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="27"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button28"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="28"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button29"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="29"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/Button30"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:drawableTop="@drawable/seat_normal"
+                android:text="30"
+                android:textSize="14dp"
+                android:background="@android:color/transparent"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="230dp"
+        android:layout_height="125dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/gachon_logo" />
+
+</LinearLayout>
