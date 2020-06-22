@@ -23,7 +23,6 @@ public class AdminModeActivity extends AppCompatActivity {
         findViewById(R.id.collegeButton).setOnClickListener(onClickListener);
 
     }
-
     View.OnClickListener onClickListener = new View.OnClickListener() {
 
         public void onClick(View v) {
@@ -34,7 +33,6 @@ public class AdminModeActivity extends AppCompatActivity {
                     break;
 
             }
-
             switch (v.getId()) {
                 case R.id.elecInfoButton:
                     intent = new Intent(getApplicationContext(), AdminElectroActivity.class);
@@ -42,7 +40,6 @@ public class AdminModeActivity extends AppCompatActivity {
                     break;
 
             }
-
             switch (v.getId()) {
                 case R.id.collegeButton:
                     intent = new Intent(getApplicationContext(), AdminCollegeActivity.class);

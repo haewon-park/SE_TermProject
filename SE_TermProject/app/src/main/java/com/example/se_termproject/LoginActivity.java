@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.loginButton).setOnClickListener(onClickListener);
         findViewById(R.id.registerButton).setOnClickListener(onClickListener);
+        findViewById(R.id.adminButton).setOnClickListener(onClickListener);
     }
 
     @Override
@@ -48,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
                 case R.id.registerButton:
                     Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
                     startActivity(intent);
+                    break;
+                case R.id.adminButton:
+                    Intent intent1 = new Intent(getApplicationContext(), AdminLoginActivity.class);
+                    startActivity(intent1);
                     break;
             }
         }

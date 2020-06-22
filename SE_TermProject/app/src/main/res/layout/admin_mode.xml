@@ -48,12 +48,14 @@
             android:layout_height="90dp"
             android:background="@drawable/college" />
 
-        <ImageView
-            android:layout_width="230dp"
-            android:layout_height="125dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/gachon_logo" />
+        <Button
+            android:id="@+id/timeButton"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="340dp"
+            android:layout_height="90dp"
+            android:background="@drawable/time" />
 
     </LinearLayout>
 </ScrollView>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.se_termproject">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name = "android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -12,22 +13,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".SignUpActivity"/>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".MemberInitActivity"/>
-        <activity android:name=".ModeActivity"/>
-        <activity android:name=".CenterActivity"/>
-        <activity android:name=".AdminCollegeActivity"/>
-        <activity android:name=".LibraryActivity"/>
-        <activity android:name=".MyActivity"/>
-        <activity android:name=".AdminModeActivity"/>
-        <activity android:name=".AdminCenterActivity"/>
-        <activity android:name=".AdminElectroActivity"/>
-        <activity android:name=".LoadingActivity"
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SignUpActivity" />
+
+        <activity android:name=".MainActivity" />
+        <activity android:name=".Main2Activity" />
+        <activity android:name=".MemberInitActivity" />
+        <activity android:name=".ModeActivity" />
+        <activity android:name=".CenterActivity" />
+        <activity android:name=".AdminCollegeActivity" />
+        <activity android:name=".LibraryActivity" />
+        <activity android:name=".MyActivity" />
+        <activity android:name=".AdminModeActivity" />
+        <activity android:name=".AdminCenterActivity" />
+        <activity android:name=".AdminElectroActivity" />
+        <activity android:name=".AdminLoginActivity" />
+        <activity android:name=".AdminMemberInitActivity" />
+
+
+        <activity
+            android:name=".LoadingActivity"
             android:screenOrientation="fullSensor"
             android:theme="@style/LoadingTheme">
-        <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,8 +47,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
-                    android:host="google.com" />
+                    android:host="google.com"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
 

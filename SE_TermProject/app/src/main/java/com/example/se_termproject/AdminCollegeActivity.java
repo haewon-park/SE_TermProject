@@ -32,18 +32,51 @@ import java.util.Map;
 public class AdminCollegeActivity extends AppCompatActivity {
     FirebaseFirestore db;
     String[] status = new String[31];
-    Button Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11, Button12, Button13, Button14, Button15, Button16, Button17, Button18, Button19, Button20, Button21, Button22, Button23, Button24, Button25, Button26, Button27, Button28, Button29, Button30;
-    String seatNumber=null;
+    Button Button1;
+    Button Button2;
+    Button Button3;
+    Button Button4;
+    Button Button5;
+    Button Button6;
+    Button Button7;
+    Button Button8;
+    Button Button9;
+    Button Button10;
+    Button Button11;
+    Button Button12;
+    Button Button13;
+    Button Button14;
+    Button Button15;
+    Button Button16;
+    Button Button17;
+    Button Button18;
+    Button Button19;
+    Button Button20;
+    Button Button21;
+    Button Button22;
+    Button Button23;
+    Button Button24;
+    Button Button25;
+    Button Button26;
+    Button Button27;
+    Button Button28;
+    Button Button29;
+    Button Button30;
+    String seatNumber = null;
+    String location;
 
     //firebase
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
     DocumentReference docRefUserInfo;
     String time;
     String seatNum;
     String using;
+    String userId;
+    String statusTemp;
     DocumentReference docRef;
-    DocumentReference docRef2;
+    DocumentReference docSeat;
 
     //Alarm
     AlarmManager alarm_manager;
@@ -53,13 +86,15 @@ public class AdminCollegeActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 3333;
     public long calculateTime = 0;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_center);
+        setContentView(R.layout.activity_admin_center);
         db = FirebaseFirestore.getInstance();
-
+        my_intent = new Intent(getApplicationContext(), Alarm_Receiver.class);
+        location="IT";
         Button1 = findViewById(R.id.Button1);
         Button2 = findViewById(R.id.Button2);
         Button3 = findViewById(R.id.Button3);
@@ -91,9 +126,7 @@ public class AdminCollegeActivity extends AppCompatActivity {
         Button29 = findViewById(R.id.Button29);
         Button30 = findViewById(R.id.Button30);
 
-        docRefUserInfo = db.collection("users").document(user.getUid());
-
-        db.collection("Center").get()
+        db.collection(location).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -108,70 +141,109 @@ public class AdminCollegeActivity extends AppCompatActivity {
                         }
                     }
                 });
-        // Initialize Firebase Auth
-        docRefUserInfo.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // imgNum 받아옴
-                        Map<String, Object> temp = document.getData();
-                        using = (String) temp.get("using");
-                        seatNum = (String) temp.get("seat");
-                        time = (String) temp.get("time");
-                    }
-                }
-            }
-        });
-        docRef = db.collection("users").document(user.getUid());
-        docRef2= db.collection(using).document(seatNum);
 
         Button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("퇴실하시겠습니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("1");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -186,51 +258,110 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
 
         Button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("2");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -245,50 +376,110 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
+
         Button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("3");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -303,50 +494,111 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
+
+
         Button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("4");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -361,50 +613,110 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
+
         Button5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("5");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -419,50 +731,109 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
         Button6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("6");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -476,51 +847,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button7.setOnClickListener(new View.OnClickListener() {
+        });Button7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("7");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -534,51 +962,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button8.setOnClickListener(new View.OnClickListener() {
+        });Button8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("8");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -592,51 +1077,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button9.setOnClickListener(new View.OnClickListener() {
+        });Button9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("9");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -650,51 +1192,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button10.setOnClickListener(new View.OnClickListener() {
+        });Button10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("10");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -708,51 +1307,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button11.setOnClickListener(new View.OnClickListener() {
+        });Button11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("11");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -766,51 +1422,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button12.setOnClickListener(new View.OnClickListener() {
+        });Button12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("12");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -824,51 +1537,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button13.setOnClickListener(new View.OnClickListener() {
+        });Button13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("13");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -882,51 +1652,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button14.setOnClickListener(new View.OnClickListener() {
+        });Button14.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("14");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -940,51 +1767,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button15.setOnClickListener(new View.OnClickListener() {
+        });Button15.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("15");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -998,51 +1882,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button16.setOnClickListener(new View.OnClickListener() {
+        });Button16.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("16");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1056,51 +1997,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button17.setOnClickListener(new View.OnClickListener() {
+        });Button17.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("17");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1114,51 +2112,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button18.setOnClickListener(new View.OnClickListener() {
+        });Button18.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("18");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1172,51 +2227,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button19.setOnClickListener(new View.OnClickListener() {
+        });Button19.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("19");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1230,51 +2342,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button20.setOnClickListener(new View.OnClickListener() {
+        });Button20.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("20");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1288,51 +2457,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button21.setOnClickListener(new View.OnClickListener() {
+        });Button21.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("21");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1346,51 +2572,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button22.setOnClickListener(new View.OnClickListener() {
+        });Button23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("23");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1404,51 +2687,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button23.setOnClickListener(new View.OnClickListener() {
+        });Button24.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("24");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1462,51 +2802,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button24.setOnClickListener(new View.OnClickListener() {
+        });Button25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("25");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1520,51 +2917,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button25.setOnClickListener(new View.OnClickListener() {
+        });Button26.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("26");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1578,109 +3032,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button26.setOnClickListener(new View.OnClickListener() {
+        });Button27.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("27");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
-                        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
-                                PendingIntent.FLAG_CANCEL_CURRENT);
-                        finish();
-
-                    }
-                });
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
-        });
-        Button27.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                        //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
-                        //이용했던 좌석 상태도 0으로 전환.
-
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1699,46 +3152,104 @@ public class AdminCollegeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("28");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1752,51 +3263,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button29.setOnClickListener(new View.OnClickListener() {
+        });Button29.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("29");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1810,51 +3378,108 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 });
                 builder.show();
             }
-        });
-        Button30.setOnClickListener(new View.OnClickListener() {
+        });Button30.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AdminCollegeActivity.this);
-                builder.setMessage("강제 퇴실시킵니까?");
+                builder.setMessage("강제 퇴실하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        docSeat = db.collection(location).document("30");
+                        docSeat.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        // imgNum 받아옴
+                                        Map<String, Object> temp = document.getData();
+                                        seatNum = (String) temp.get("seatNum");
+                                        statusTemp = (String) temp.get("status");
+                                        userId = (String) temp.get("user");
+
+                                        docRef = db.collection("users").document(userId);
+
+                                        docRef
+                                                .update("seat", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("time", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docRef
+                                                .update("using", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+
+                                        docSeat
+                                                .update("status", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                        docSeat
+                                                .update("user", "0")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("update", "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        });
 
 
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
-                        docRef
-                                .update("seat", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-                        docRef2
-                                .update("status", "0")
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("update", "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("update", "Error updating document", e);
-                                    }
-                                });
-
-
-                        calculateTime = calendar.getTimeInMillis();
                         pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), REQUEST_CODE, my_intent,
                                 PendingIntent.FLAG_CANCEL_CURRENT);
                         finish();
@@ -1869,11 +3494,11 @@ public class AdminCollegeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
     }
+
     private void accessUserInfoDB(final String document_id) {
         db
-                .collection("Center")
+                .collection(location)
                 .document(document_id)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -1983,8 +3608,7 @@ public class AdminCollegeActivity extends AppCompatActivity {
                                 }
 
 
-                            }
-                            else if (status[a].equals("0") == true) {
+                            } else if (status[a].equals("0") == true) {
                                 switch (a) {
                                     case 1:
                                         Button1.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.seat_normal, 0, 0);
@@ -2077,7 +3701,10 @@ public class AdminCollegeActivity extends AppCompatActivity {
                                         Button30.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.seat_normal, 0, 0);
                                         break;
                                 }
+
+
                             }
+
                         }
                     }
                 });

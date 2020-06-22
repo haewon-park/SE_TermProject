@@ -29,6 +29,7 @@ import java.util.Map;
 public class Forced_Return extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+
     FirebaseFirestore db;
     DocumentReference docRefUserInfo;
     String time;
@@ -36,6 +37,7 @@ public class Forced_Return extends AppCompatActivity {
     String using;
     DocumentReference docRef;
     DocumentReference docRef2;
+
 
     AlarmManager alarm_manager;
     private Calendar calendar;
@@ -49,8 +51,10 @@ public class Forced_Return extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         docRefUserInfo = db.collection("users").document(user.getUid());
+
 
         // Initialize Firebase Auth
         docRefUserInfo.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -70,6 +74,8 @@ public class Forced_Return extends AppCompatActivity {
         });
         docRef = db.collection("users").document(user.getUid());
         docRef2= db.collection(using).document(seatNum);
+
+
 
         // 강제종료를 밑에 구현한다.
 
@@ -102,6 +108,7 @@ public class Forced_Return extends AppCompatActivity {
                         Log.w("update", "Error updating document", e);
                     }
                 });
+
 
         //알람 종료.
         calculateTime = calendar.getTimeInMillis();

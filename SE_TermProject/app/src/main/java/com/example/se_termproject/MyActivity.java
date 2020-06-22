@@ -47,6 +47,8 @@ public class MyActivity extends AppCompatActivity {
     String time;
     String seatNum;
     String using;
+    String status;
+
     DocumentReference docRef;
     DocumentReference docRef2;
 
@@ -82,9 +84,11 @@ public class MyActivity extends AppCompatActivity {
         plusButton = (Button) findViewById(R.id.button1); //연장
         returnButton = (Button) findViewById(R.id.button2); //반납
         GoOutButton = (Button) findViewById(R.id.button3); //외출
+        my_intent = new Intent(getApplicationContext(),Alarm_Receiver.class);
         // Initialize Firebase Auth
         docRefUserInfo = db.collection("users").document(user.getUid());
         docRef = db.collection("users").document(user.getUid());
+
         time = "0";
         // 유저 정보접근
         docRefUserInfo.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -98,10 +102,8 @@ public class MyActivity extends AppCompatActivity {
                         using = (String) temp.get("using");
                         seatNum = (String) temp.get("seat");
                         time = (String) temp.get("time");
-
                         if (seatNum.equals("0")) {
                             Toast.makeText(MyActivity.this, "사용 중인 좌석이 없습니다.", Toast.LENGTH_SHORT).show();
-
                         } else {
                             //좌석 알려주는 곳
                             //using 도서관
@@ -109,6 +111,7 @@ public class MyActivity extends AppCompatActivity {
                             room.setText(using);
                             seat.setText(seatNum);
                             timeText.setText(time);
+
                             docRef2= db.collection(using).document(seatNum);
                             //docRef2가 status 정보는 못 가져오는 것 같음
 
@@ -122,6 +125,10 @@ public class MyActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
 
         plusButton.setOnClickListener(new View.OnClickListener() {
 
@@ -145,6 +152,8 @@ public class MyActivity extends AppCompatActivity {
                                     .create()
                                     .show();
 
+
+
                             //연장한 시간만큼 알람예약시간에 더 해주기
                             if(which == 0 ){
                                 double temp = Double.parseDouble(time)+0.5;
@@ -166,6 +175,7 @@ public class MyActivity extends AppCompatActivity {
                                             }
                                         });
                                 //알람 예약 시간 30분 추가
+
 
                                 SharedPreferences pref =getSharedPreferences("pref", MODE_PRIVATE);
                                 String result = "";
@@ -216,10 +226,13 @@ public class MyActivity extends AppCompatActivity {
 
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("set_hour", result); //키값, 저장값
+
+
                             }
+
+
                         }
                     });
-
                     dialog.show();
                     mCount++;
                     int rr = max - mCount;
@@ -281,9 +294,38 @@ public class MyActivity extends AppCompatActivity {
                                         Log.w("update", "Error updating document", e);
                                     }
                                 });
+                        docRef
+                                .update("using", "0")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("update", "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("update", "Error updating document", e);
+                                    }
+                                });
 
                         docRef2
                                 .update("status", "0")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("updatetest", "DocumentSnapshot successfully updated!");
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("updatetest", "Error updating document", e);
+                                    }
+                                });
+                        docRef2
+                                .update("user", "0")
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -351,8 +393,8 @@ public class MyActivity extends AppCompatActivity {
                                     .create()
                                     .show();
 
-                            docRef2
-                                    .update("status", "2")
+                            /*docRef2
+                                    .update("status", "1")
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -364,7 +406,8 @@ public class MyActivity extends AppCompatActivity {
                                         public void onFailure(@NonNull Exception e) {
                                             Log.w("update", "Error updating document", e);
                                         }
-                                    });
+                                    });*/
+
 
                             //연장한 시간만큼 알람예약시간에 더 해주기
 
@@ -387,6 +430,7 @@ public class MyActivity extends AppCompatActivity {
                                         }
                                     });
                             //알람 예약 시간 30분 추가
+
 
                             SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                             String result = "";
@@ -418,6 +462,7 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
+
         if (seatNum == "0") {
             seatText.setVisibility(View.VISIBLE);
             layout.setVisibility(View.GONE);
@@ -425,9 +470,7 @@ public class MyActivity extends AppCompatActivity {
             seat.setText(null);
             timeText.setText(null);
             number.setText(null);
-        }
-
-        else {
+        } else {
             seatText.setVisibility(View.GONE);
             layout.setVisibility(View.VISIBLE);
         }

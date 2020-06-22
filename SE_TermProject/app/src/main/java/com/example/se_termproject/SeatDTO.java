@@ -6,11 +6,13 @@ public class SeatDTO {
     private String dept;
     private String seatNum;
     private String status;
+    private String user;
 
-    public SeatDTO(String dept, String seatNum, String status) {
+    public SeatDTO(String dept, String seatNum, String status, String user) {
         this.dept = dept;
         this.seatNum = seatNum;
         this.status = status;
+        this.user = user;
     }
 
     public String getDept() {
@@ -35,6 +37,14 @@ public class SeatDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
 }
