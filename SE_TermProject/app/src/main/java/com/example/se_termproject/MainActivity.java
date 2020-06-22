@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                             // 회원정보가 입력되어 있다면
                             if (document.exists()) {
                                 Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                myStartActivity(AdminModeActivity.class);
+                                myStartActivity(ModeActivity.class);
                             } else {
 //                                회워정보가 입력되지 않았다면
                                 Log.d(TAG, "No such document");
