@@ -32,35 +32,7 @@ import java.util.Map;
 public class AdminCenterActivity extends AppCompatActivity {
     FirebaseFirestore db;
     String[] status = new String[31];
-    Button Button1, Button2;
-    Button Button3;
-    Button Button4;
-    Button Button5;
-    Button Button6;
-    Button Button7;
-    Button Button8;
-    Button Button9;
-    Button Button10;
-    Button Button11;
-    Button Button12;
-    Button Button13;
-    Button Button14;
-    Button Button15;
-    Button Button16;
-    Button Button17;
-    Button Button18;
-    Button Button19;
-    Button Button20;
-    Button Button21;
-    Button Button22;
-    Button Button23;
-    Button Button24;
-    Button Button25;
-    Button Button26;
-    Button Button27;
-    Button Button28;
-    Button Button29;
-    Button Button30;
+    Button Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11, Button12, Button13, Button14, Button15, Button16, Button17, Button18, Button19, Button20, Button21, Button22, Button23, Button24, Button25, Button26, Button27, Button28, Button29, Button30;
     String seatNumber=null;
 
 
