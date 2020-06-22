@@ -51,7 +51,6 @@ public class Alarm_Receiver extends BroadcastReceiver {
         //acquire 함수를 실행하여 앱을 깨운다. cpu 를 획득한다
         sCpuWakeLock.acquire();
 
-
         manager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         this.context = context;
@@ -65,7 +64,6 @@ public class Alarm_Receiver extends BroadcastReceiver {
         // 액티비티를 띄운다
         this.context.startActivity(alarmIntent);
 
-
         // acquire 함수를 사용하였으면 꼭 release 를 해주어야 한다.
         // cpu를 점유하게 되어 배터리 소모나 메모리 소모에 영향을 미칠 수 있다
         if(sWifiLock != null) {
@@ -77,9 +75,5 @@ public class Alarm_Receiver extends BroadcastReceiver {
             sCpuWakeLock.release();
             sCpuWakeLock = null;
         }
-
     }
-
-
-
 }
