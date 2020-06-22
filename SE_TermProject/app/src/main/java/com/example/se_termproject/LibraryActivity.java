@@ -56,13 +56,17 @@ public class LibraryActivity extends AppCompatActivity {
     private ArrayAdapter adapter1;
     DocumentReference docRef;
     DocumentReference docRef2;
+
     // 현재시간을 msec 으로 구한다.
     long now = System.currentTimeMillis();
+
     // 현재시간을 date 변수에 저장한다.
     Date date = new Date(now);
     Calendar mCalendar = Calendar.getInstance();
+
     // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
     SimpleDateFormat sdfNow = new SimpleDateFormat("HH:mm");
+
     // nowDate 변수에 값을 저장한다.
     String formatDate = sdfNow.format(date);
     TextView dateNow;
@@ -70,12 +74,10 @@ public class LibraryActivity extends AppCompatActivity {
     String dept;
     String timeString;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
-
 
         docRef = db.collection("users").document(user.getUid());
 
@@ -84,7 +86,6 @@ public class LibraryActivity extends AppCompatActivity {
 
         dept = bundle.getString("dept");
         seatNum = bundle.getString("seatNum");
-
 
         Log.d("test2",dept);
         Log.d("test2",seatNum);
@@ -98,7 +99,6 @@ public class LibraryActivity extends AppCompatActivity {
 
         dateNow = (TextView) findViewById(R.id.dateNow);
         dateNow.setText(formatDate);    // TextView 에 현재 시간 문자열 할당
-
 
         final Button registerButton = (Button) findViewById(R.id.roomButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +131,9 @@ public class LibraryActivity extends AppCompatActivity {
                             .create();
                     dialog.show();
                     return;
-                } else {
+                }
+
+                else {
                     /*좌석 상태 받아오기 int status=0*/
                     int status = 0;
                     if (status == 0) {
@@ -262,6 +264,5 @@ public class LibraryActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

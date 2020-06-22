@@ -99,7 +99,6 @@ public class MyActivity extends AppCompatActivity {
                         seatNum = (String) temp.get("seat");
                         time = (String) temp.get("time");
 
-
                         if (seatNum.equals("0")) {
                             Toast.makeText(MyActivity.this, "사용 중인 좌석이 없습니다.", Toast.LENGTH_SHORT).show();
 
@@ -124,10 +123,6 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
         plusButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -150,8 +145,6 @@ public class MyActivity extends AppCompatActivity {
                                     .create()
                                     .show();
 
-
-
                             //연장한 시간만큼 알람예약시간에 더 해주기
                             if(which == 0 ){
                                 double temp = Double.parseDouble(time)+0.5;
@@ -173,7 +166,6 @@ public class MyActivity extends AppCompatActivity {
                                             }
                                         });
                                 //알람 예약 시간 30분 추가
-
 
                                 SharedPreferences pref =getSharedPreferences("pref", MODE_PRIVATE);
                                 String result = "";
@@ -224,13 +216,10 @@ public class MyActivity extends AppCompatActivity {
 
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("set_hour", result); //키값, 저장값
-
-
                             }
-
-
                         }
                     });
+
                     dialog.show();
                     mCount++;
                     int rr = max - mCount;
@@ -261,10 +250,6 @@ public class MyActivity extends AppCompatActivity {
                 builder.setMessage("반납하시겠습니까?");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
-
-
-
                         //DB 내역 지우기 유저한테서 이용중인 좌석 번호 지우고
                         //이용했던 좌석 상태도 0으로 전환.
 
@@ -311,7 +296,6 @@ public class MyActivity extends AppCompatActivity {
                                         Log.w("update", "Error updating document", e);
                                     }
                                 });
-
 
                         /*db 내역 다시 불러오기*/
 
@@ -382,7 +366,6 @@ public class MyActivity extends AppCompatActivity {
                                         }
                                     });
 
-
                             //연장한 시간만큼 알람예약시간에 더 해주기
 
                             double temp = Double.parseDouble(time) + 0.5;
@@ -404,7 +387,6 @@ public class MyActivity extends AppCompatActivity {
                                         }
                                     });
                             //알람 예약 시간 30분 추가
-
 
                             SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                             String result = "";
@@ -436,7 +418,6 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
-
         if (seatNum == "0") {
             seatText.setVisibility(View.VISIBLE);
             layout.setVisibility(View.GONE);
@@ -444,7 +425,9 @@ public class MyActivity extends AppCompatActivity {
             seat.setText(null);
             timeText.setText(null);
             number.setText(null);
-        } else {
+        }
+
+        else {
             seatText.setVisibility(View.GONE);
             layout.setVisibility(View.VISIBLE);
         }
