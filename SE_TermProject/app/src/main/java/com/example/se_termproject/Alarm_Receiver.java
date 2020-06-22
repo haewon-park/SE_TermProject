@@ -12,7 +12,7 @@ import android.os.PowerManager;
 
 
 import static android.content.Context.WIFI_SERVICE;
-
+// Alarm function
 public class Alarm_Receiver extends BroadcastReceiver {
 
     Context context;
