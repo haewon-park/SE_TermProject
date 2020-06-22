@@ -28,7 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.Calendar;
 import java.util.Map;
 
-
+// Admin Center reservation
 public class AdminCenterActivity extends AppCompatActivity {
     FirebaseFirestore db;
     String[] status = new String[31];
