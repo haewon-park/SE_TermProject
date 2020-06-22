@@ -42,10 +42,12 @@ public class ModeActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.roomButton:
-
+                    intent = new Intent(getApplicationContext(), ElectroActivity.class);
+                    startActivity(intent);
                     break;
                 case R.id.infoLibraryButton:
-
+                    intent = new Intent(getApplicationContext(), CollegeActivity.class);
+                    startActivity(intent);
                     break;
                 case R.id.readingRoomButton:
                     intent = new Intent(getApplicationContext(), MyActivity.class);

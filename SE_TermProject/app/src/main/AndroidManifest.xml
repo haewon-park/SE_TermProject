@@ -33,7 +33,10 @@
         <activity android:name=".AdminElectroActivity" />
         <activity android:name=".AdminLoginActivity" />
         <activity android:name=".AdminMemberInitActivity" />
-
+        <activity android:name=".AdminTimeSetActivity" />
+        <activity android:name=".ElectroActivity" />
+        <activity android:name=".CollegeActivity" />
+        
 
         <activity
             android:name=".LoadingActivity"

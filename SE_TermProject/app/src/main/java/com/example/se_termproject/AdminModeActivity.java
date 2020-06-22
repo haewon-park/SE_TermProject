@@ -20,7 +20,7 @@ public class AdminModeActivity extends AppCompatActivity {
 
         findViewById(R.id.centerButton).setOnClickListener(onClickListener);
         findViewById(R.id.elecInfoButton).setOnClickListener(onClickListener);
-        findViewById(R.id.collegeButton).setOnClickListener(onClickListener);
+        findViewById(R.id.timeButton).setOnClickListener(onClickListener);
 
     }
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -41,8 +41,8 @@ public class AdminModeActivity extends AppCompatActivity {
 
             }
             switch (v.getId()) {
-                case R.id.collegeButton:
-                    intent = new Intent(getApplicationContext(), AdminCollegeActivity.class);
+                case R.id.timeButton:
+                    intent = new Intent(getApplicationContext(), AdminTimeSetActivity.class);
                     startActivity(intent);
                     break;
 
