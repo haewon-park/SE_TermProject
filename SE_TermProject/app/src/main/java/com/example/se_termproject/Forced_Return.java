@@ -25,7 +25,7 @@ import java.util.Map;
 
 
 // 사용시간이 끝나면 실행되는 Activity
-
+// forced out Activity
 public class Forced_Return extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
