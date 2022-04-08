@@ -55,17 +55,20 @@
 * If user limit times, system announce user excess.
 * If user use this function, system update DB and modify UI 
 
-**2. Functional Requirement**
+**2. Non Functional Requirement**
 
-1-1. Reservation
-* View seat information
-* Choose and modify seat user want
-* Replace empty seat
+1-1. Usability
+* UI seat clearly delimited
+* UI should be created so that users can easily see it
 
-1-2. Outing & Extension
-* Limit and View times outing and extension
-* If user limit times, system announce user excess.
-* If user use this function, system update DB and modify UI 
+1-2. Reliability
+* Protect DB to avoid errors.
+* Only authorized users access DB.
+
+1-3. Performance
+* Less than 3 sec to update DB
+* Less than 3 sec to modify UI
+
 
 ### Member Roles
 | 박해원 | 장휘준 | 이상운 | 오태호 |
@@ -73,8 +76,4 @@
 | UML & Structure Design   | Detailed UI Design    | Time Extension & Outing Function | Debugging & Combine Features |
 | Membership & Login Function  | Admin’s Functions | Database Interlink |  Reservation, Shift Move, Checkout function |
 <br>
-
-### Demo Video
-[![Priend](https://user-images.githubusercontent.com/48427099/86105267-18453300-bafa-11ea-865b-35262d757363.png)](https://youtu.be/FxWji8LNcKQ)
-
 
