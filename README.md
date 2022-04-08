@@ -57,15 +57,15 @@
 
 **2. Non Functional Requirement**
 
-1-1. Usability
+2-1. Usability
 * UI seat clearly delimited
 * UI should be created so that users can easily see it
 
-1-2. Reliability
+2-2. Reliability
 * Protect DB to avoid errors.
 * Only authorized users access DB.
 
-1-3. Performance
+2-3. Performance
 * Less than 3 sec to update DB
 * Less than 3 sec to modify UI
 
